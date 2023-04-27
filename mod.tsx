@@ -139,8 +139,10 @@ export function or<T1, T2>(type1: ArgData<T1>, type2: ArgData<T2>): ArgData<T1|T
 export function literal(val: string): ArgData<boolean> {
     return {
         name: val,
-        parse(args: ArgIter): boolean {
-            return args.next()?.toLocaleLowerCase() == val.toLocaleLowerCase()
+        parse(args: ArgIter): boolean|undefined {
+            let next = args.next()
+            if (!next) return 
+            return next.toLocaleLowerCase() == val.toLocaleLowerCase()
         },
         literal: true
     }
