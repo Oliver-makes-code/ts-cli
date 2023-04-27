@@ -165,7 +165,7 @@ export class CLI {
             if (this.tryExecute(arg)) return
         }
 
-
+        this.printHelp()
     }
 
     printHelp() {
@@ -174,8 +174,8 @@ export class CLI {
         function buildParamArr(names: string[]): React.Node[] {
             let out: React.Node[] = []
             for (let name of names) {
-                out.push(<>{name}</>)
-                out.push(<blue>|</blue>)
+                out.push(<> { name } </>)
+                out.push(<blue> | </blue>)
             }
             out.pop()
             return out
@@ -185,16 +185,25 @@ export class CLI {
             let params: React.Node[] = []
             for (let param of arg.args) {
                 let name = <green>
-                    { typeof param.name == "string"
-                        ? param.name
-                        : buildParamArr(param.name)
+                    {
+                        typeof param.name == "string"
+                            ? param.name
+                            : buildParamArr(param.name)
                     }
                 </green>
                 params.push(<>
                     {
                         param.literal
-                            ? <blue>{param.name}</blue>
-                            : <blue>{"<"}<green>{name}</green>{">"}</blue>
+                            ? <blue>
+                                { param.name }
+                            </blue>
+                            : <blue>
+                                {"<"}
+                                <green>
+                                    { name }
+                                </green>
+                                {">"}
+                            </blue>
                     }
                     {
                         param.optional
@@ -204,8 +213,17 @@ export class CLI {
                 </>)
             }
             commands.push(<>
-                <tab idt={2}/>- {params}<br/>
-                { arg.description ? <green><tab idt={6}/>{arg.description}</green> : "" }
+                <tab idt={2}/>
+                - { params }
+                <br/>
+                {
+                    arg.description
+                        ? <green>
+                            <tab idt={6}/>
+                            {arg.description}
+                        </green>
+                        : "" 
+                }
                 <br/>
             </>)
         }
@@ -218,8 +236,12 @@ export class CLI {
                         {
                             this.appName
                                 ? <>
-                                    <tab/>for 
-                                    <blue> {this.appName}</blue>
+                                    <tab/>
+                                    for
+                                    <tab/>
+                                    <blue>
+                                        { this.appName }
+                                    </blue>
                                 </> 
                                 : ""
                         }
@@ -230,12 +252,12 @@ export class CLI {
                         ? <blue>
                             <br/>
                             <tab idt={4}/>
-                            {this.description}
+                            { this.description }
                         </blue>
                         : ""
                 }
                 <br/><br/>
-                {commands}
+                { commands }
             </>
         )
     }
