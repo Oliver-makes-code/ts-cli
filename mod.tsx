@@ -1,5 +1,5 @@
 import * as React from "./fakeReact.tsx"
-import { print } from "./fakeReact.tsx"
+import { print, getString } from "./fakeReact.tsx"
 
 export type ArgData<T> = {
     name: string|string[],
@@ -17,10 +17,22 @@ export type Argument<T extends any[]> = {
 const error = {
     or: {
         literal(val: any) {
-            return "Cannot or with a literal argument.\n"+JSON.stringify(val)
+            return new Error(getString(
+                <red>
+                    Cannot or with a literal argument.
+                    <br/>
+                    {val}
+                </red>
+            ))
         },
         optional(val: any) {
-            return "Cannot or with an optional argument, optional must be the last method.\n"+JSON.stringify(val)
+            return new Error(getString(
+                <red>
+                    Cannot or with an optional argument, optional must be the last method.\n
+                    <br/>
+                    {val}
+                </red>
+            ))
         }
     }
 }
