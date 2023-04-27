@@ -142,7 +142,7 @@ export function literal(val: string): ArgData<boolean> {
         parse(args: ArgIter): boolean|undefined {
             let next = args.next()
             if (!next) return 
-            return next.toLocaleLowerCase() == val.toLocaleLowerCase()
+            return next.toLocaleLowerCase() == val.toLocaleLowerCase() ? true : undefined
         },
         literal: true
     }
