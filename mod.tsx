@@ -267,10 +267,9 @@ export class CLI {
     private tryExecute(arg: Argument<any[]>): boolean {
         let iter = new ArgIter()
         let input: any[] = []
-        let success = true
         for (let type of arg.args) {
             let parsed = type.parse(iter)
-            if (parsed == undefined)
+            if (parsed === undefined)
                 return false
             if (!type.literal) input.push(parsed)
         }
