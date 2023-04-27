@@ -201,14 +201,27 @@ export class CLI {
         print(
             <>
                 <tab idt={2}/>
-                <green>Usage{this.appName ? <>
-                    <tab/>for 
-                    <blue> {this.appName}</blue></> : ""}:</green>
-                {this.description ? <blue>
-                    <br/>
-                    <tab idt={4}/>
-                    {this.description}
-                </blue> : ""}
+                <green>
+                    Usage
+                        {
+                            this.appName
+                                ? <>
+                                    <tab/>for 
+                                    <blue> {this.appName}</blue>
+                                </> 
+                                : ""
+                        }
+                    :
+                </green>
+                {
+                    this.description
+                        ? <blue>
+                            <br/>
+                            <tab idt={4}/>
+                            {this.description}
+                        </blue>
+                        : ""
+                }
                 <br/><br/>
                 {commands}
             </>
