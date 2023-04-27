@@ -2,7 +2,8 @@ import * as React from "./fakeReact.tsx"
 import { print, getString } from "./fakeReact.tsx"
 
 export type ArgData<T> = {
-    name: string|string[],
+    name?: string,
+    type: string|string[],
     parse(iter: ArgIter): T|undefined,
     literal?: boolean,
     optional?: boolean
@@ -39,13 +40,13 @@ const error = {
 
 export const Builtin = {
     STRING: {
-        name: "string",
+        type: "string",
         parse(iter: ArgIter): string|undefined {
             return iter.next()
         }
     } as ArgData<string>,
     NUMBER: {
-        name: "number",
+        type: "number",
         parse(iter: ArgIter): number|undefined {
             let numStr = iter.next()
             if (!numStr) return
@@ -55,7 +56,7 @@ export const Builtin = {
         }
     } as ArgData<number>,
     BOOLEAN: {
-        name: "boolean",
+        type: "boolean",
         parse(iter: ArgIter): boolean|undefined {
             let str = iter.next()
             if (!str) return
@@ -95,7 +96,7 @@ export class ArgIter {
 
 export function optional<T>(type: ArgData<T>): ArgData<T|null> {
     return {
-        name: type.name,
+        type: type.type,
         parse(args: ArgIter): T|null {
             let startIdx = args.idx
             let parse = type.parse(args)
@@ -117,15 +118,15 @@ export function or<T1, T2>(type1: ArgData<T1>, type2: ArgData<T2>): ArgData<T1|T
     if (type2.optional) 
         throw error.or.optional(type1)
     
-    let name = []
-    if (Array.isArray(type1.name))
-        name.push(...type1.name)
-    else name.push(type1.name)
-    if (Array.isArray(type2.name))
-        name.push(...type2.name)
-    else name.push(type2.name)
+    let type = []
+    if (Array.isArray(type1.type))
+        type.push(...type1.type)
+    else type.push(type1.type)
+    if (Array.isArray(type2.type))
+        type.push(...type2.type)
+    else type.push(type2.type)
     return {
-        name,
+        type,
         parse(args: ArgIter): T1 | T2 | undefined {
             let startIdx = args.idx
             let first = type1.parse(args)
@@ -138,13 +139,20 @@ export function or<T1, T2>(type1: ArgData<T1>, type2: ArgData<T2>): ArgData<T1|T
 
 export function literal(val: string): ArgData<boolean> {
     return {
-        name: val,
+        type: val,
         parse(args: ArgIter): boolean|undefined {
             let next = args.next()
             if (!next) return 
             return next.toLocaleLowerCase() == val.toLocaleLowerCase() ? true : undefined
         },
         literal: true
+    }
+}
+
+export function named<T>(arg: ArgData<T>, name: string): ArgData<T> {
+    return {
+        name,
+        ...arg
     }
 }
 
@@ -186,23 +194,26 @@ export class CLI {
         for (let arg of this.args) {
             let params: React.Node[] = []
             for (let param of arg.args) {
-                let name = <green>
+                let name = param.name ? <cyan>{param.name}<blue>: </blue></cyan> : <></>
+                
+                let type = <green>
+                    { name }
                     {
-                        typeof param.name == "string"
-                            ? param.name
-                            : buildParamArr(param.name)
+                        typeof param.type == "string"
+                            ? param.type
+                            : buildParamArr(param.type)
                     }
                 </green>
                 params.push(<>
                     {
                         param.literal
                             ? <blue>
-                                { param.name }
+                                { param.type }
                             </blue>
                             : <blue>
                                 {"<"}
                                 <green>
-                                    { name }
+                                    { type }
                                 </green>
                                 {">"}
                             </blue>
@@ -211,7 +222,8 @@ export class CLI {
                         param.optional
                             ? <red>?</red>
                             : ""
-                    }<tab/>
+                    }
+                    <tab/>
                 </>)
             }
             commands.push(<>
