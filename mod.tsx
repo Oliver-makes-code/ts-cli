@@ -181,11 +181,11 @@ export class CLI {
     printHelp() {
         let commands: React.Node[] = []
 
-        function buildParamArr(names: string[], optional: boolean): React.Node[] {
+        function buildParamArr(names: string[]): React.Node[] {
             let out: React.Node[] = []
             for (let name of names) {
-                out.push(<> { name } </>)
-                out.push(<blue> | </blue>)
+                out.push(<>{ name }</>)
+                out.push(<blue>|</blue>)
             }
             out.pop()
             return out
