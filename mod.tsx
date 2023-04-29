@@ -181,7 +181,7 @@ export class CLI {
     printHelp() {
         let commands: React.Node[] = []
 
-        function buildParamArr(names: string[]): React.Node[] {
+        function buildParamArr(names: string[], optional: boolean): React.Node[] {
             let out: React.Node[] = []
             for (let name of names) {
                 out.push(<> { name } </>)
@@ -204,24 +204,24 @@ export class CLI {
                             : buildParamArr(param.type)
                     }
                 </green>
+                let optional = param.optional
+                    ? <red>?</red>
+                    : ""
                 params.push(<>
                     {
                         param.literal
                             ? <blue>
                                 { param.type }
+                                { optional }
                             </blue>
                             : <blue>
                                 {"<"}
                                 <green>
                                     { type }
+                                    { optional }
                                 </green>
                                 {">"}
                             </blue>
-                    }
-                    {
-                        param.optional
-                            ? <red>?</red>
-                            : ""
                     }
                     <tab/>
                 </>)
