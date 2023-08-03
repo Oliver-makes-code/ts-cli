@@ -100,7 +100,8 @@ export function optional<T>(type: ArgData<T>): ArgData<T|null> {
         parse(args: ArgIter): T|null {
             let startIdx = args.idx
             let parse = type.parse(args)
-            args.idx = startIdx
+            if (!parse)
+                args.idx = startIdx
             return parse ?? null
         },
         optional: true
